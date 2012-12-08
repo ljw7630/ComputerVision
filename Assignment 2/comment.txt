@@ -1,0 +1,30 @@
+Comment on the success/failure of postbox monitoring:
+
+The program works with completely correct result. It can always identify the boxes that contains mails.
+
+Here's what I did:
+in function "compute_vertical_edge_image":
+1. I use cvSmooth to smooth the input image using gaussian kernel, to remove the noise. 
+2. Then I use cvSobel to calculate the first partial derivative image on vertical direction. 
+3. my non-maxima-suppression algorithm is: 
+	if (value of current_point >  value of left_point
+		and value of current_point >= value of right_point)
+		keep this point
+	else set it to zero
+4. Finally, I do threshold on the non-maxima-suppressed_image, to remove the edges that have low first derivative.
+
+in function "motion_free_frame"
+1. I convert the current_frame and pre_frame image to grayscale images, that makes the later comparision much easier.
+2. I subtract the result and get the absolute value of the subtracted image.
+3. for each pixel in the result image, I test whether the pixel value(the difference between curr_frame and pre_frame) is greater than the constant VARIATION_ALLOWED_IN_PIXEL_VALUES. if it is greater, count++ 
+4. Finally, I calculate the percentage of "drastically changed pixels" by (count*100)/(image->height*image->width). if the result is less than a constant called ALLOWED_MOTION_FOR_MOTION_FREE_IMAGE, then it's motion free. Otherwise, it's not
+
+in function "check_postboxes"
+1. Check if the current frame is motion free, if it is, return
+2. otherwise, compute the vertical edge image of current frame.
+3. Based on PostboxLocations, I can decide with rows I should check,
+and the starting column and ending column.  
+4. So the row I need to scan is PostboxLocations[i][POSTBOX_BOTTOM_ROW];
+the starting column is PostboxLocations[i][POSTBOX_LEFT_COLUMN];
+the end column is PostboxLocations[i][POSTBOX_RIGHT_COLUMN]. where i equals  to (0 to 5)
+5. if in the postbox i, the vertical edge is less than some threshold (I choose 9), than we can see the box contains mail, otherwise, we say the box is empty

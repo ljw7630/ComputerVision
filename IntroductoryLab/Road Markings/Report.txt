@@ -1,0 +1,16 @@
+The logic I used:
+The goal is to classify road marks in the video.
+The result should be shown as a binary image. The white pixels is considered the road markings, the black pixels is the road.
+
+1.	Capture each frame as Image, so that I can do image processing. The image being captured is in RGB format.
+2.	Because we want to produce a binary image. We need to find a reasonable threshold that can classify most of the road markings(white pixels in the original image)
+	So I decide convert the RGB image to grayscale. By drawing histogram of the grayscale image, I can find a threshold value for each frame.
+3.	After I try different values for fixed thresholding algorithm, I found it will not performs well in the entire video, as the light condition is changing.
+4.	So Optimal thresholding or adaptive thresholding might be the solution
+5.	So I try optimal thresholding, using "cvThreshold(temp, result, 0, 255, CV_THRESH_OTSU|CV_THRESH_BINARY);" It works well for 60% of the images
+	But it also doing poorly in the rest of the image(too many false positive cases).
+6.	Finally I try adaptive thresholding, using gaussian thresholding algorithm, and play around with the last two parameters: block_size, c(constant to be subtracted)
+7.	There's still some tiny block of pixels that are not belong to road markings but being classified as is. So I apply erosion operation to set those tiny areas as black.
+8.	Done
+
+	
