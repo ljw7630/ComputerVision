@@ -20,7 +20,6 @@ IplImage * cut_image(IplImage *source, CvRect rect);
 void draw_bounding_rectangle(IplImage * img, CvRect rect);
 void find_bounding_rectangle(CvSeq * redComponent, CvRect &rect);
 void recognition_handler(const IplImage *source, CvSeq * seq, const vector<IplImage *> templates, IplImage * target);
-void remove_background(IplImage * src_img, IplImage * dest_img);
 
 // Locate the red pixels in the source image.
 void find_red_points( IplImage* source, IplImage* result, IplImage* temp )
@@ -290,7 +289,6 @@ int main( int argc, char** argv )
 	// Load template images
 	for(int i=0;i<NUM_TEMPLATE_IMAGES; ++i)
 	{
-		cout << "image: " << i << endl;
 		IplImage *temp_image;
 		IplImage *source_image;
 		if( (source_image = cvLoadImage(templte_image_paths[i],CV_LOAD_IMAGE_UNCHANGED)) == 0)
@@ -316,7 +314,7 @@ int main( int argc, char** argv )
 
 		template_images[i] = cut_image(template_images[i], rect);
 
-		cvShowImage(int_to_string(i).c_str(), template_images[i]);
+		// cvShowImage(int_to_string(i).c_str(), template_images[i]);
 	}
 
 	// Explain the User Interface

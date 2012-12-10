@@ -65,6 +65,11 @@ void mark_image(IplImage *source, IplImage * templ, CvRect rect, double scale)
 	rect.width = (int)rect.width * scale;
 	rect.height = (int)rect.height * scale;
 
+	if(rect.width < 20 && rect.height < 20)
+	{
+		rect.width = 20 , rect.height = 20;
+	}
+
 	IplImage * scaled_img = resize_image(templ, rect);
 	cvSetImageROI(source, rect);
 	cvCopy(scaled_img, source);
@@ -96,93 +101,6 @@ void find_bounding_rectangles(CvSeq * red_components, vector<CvRect> & bounding_
 	}
 }
 
-/*
-double square_distance(int x0, int y0, int x1, int y1)
-{
-	return sqrt(  pow((double)x0-x1, 2) + pow((double)y0-y1,2) );
-}
-
-int counting_black_pixels(IplImage * img, const CvRect * rect = NULL)
-{
-	double radius;
-	int center_x;
-	int center_y;
-	int width, height;
-	int start_x, start_y;
-	if(rect != NULL)
-	{
-		radius = ((double)rect->width / 2 + (double)rect->height/2)/2;
-		center_x = rect->width/2;
-		center_y = rect->height/2;
-		width = rect->width;
-		height= rect->height;
-		start_x = rect->x;
-		start_y = rect->y;
-	}
-	else
-	{
-		radius = ((double)img->width/2 + (double)img->height/2) / 2;
-		center_x = img->width / 2;
-		center_y = img->height /2;
-		width = img->width;
-		height = img->height;
-		start_x = 0;
-		start_y = 0;
-	}
-
-	int col, row;
-	int width_step = img->widthStep;
-	int pixel_step = img->widthStep/img->width;
-	int counter = 0;
-	for(row = 0; row < width; ++row)
-	{
-		for(col = 0; col < height; ++col)
-		{
-			if( square_distance(col + start_x, row+ start_y, center_x + start_x, center_y + start_y) < radius)
-			{
-				unsigned char * p = GETPIXELPTRMACRO( img, col + start_x, row+start_y, width_step, pixel_step );
-				if(p[0] == 0 && p[1] == 0 && p[2] == 0)
-					counter++;
-			}
-		}
-	}
-
-	return counter;
-}
-
-void remove_background(IplImage * src_img, IplImage * dest_img)
-{
-	int row, col;
-	int width_step = src_img->widthStep;
-	int pixel_step = src_img->widthStep/src_img->width;
-	int threshold = 200;
-	unsigned char b_g[4] = {255,255,0,0};
-	foreach_row(row, src_img)
-	{
-		foreach_col(col, src_img)
-		{
-			unsigned char* curr_point1 = GETPIXELPTRMACRO( src_img, col, row, width_step, pixel_step );
-			unsigned char* curr_point2 = GETPIXELPTRMACRO( dest_img, col, row, width_step, pixel_step );
-
-			if( abs(curr_point1[0] - curr_point2[0]) > threshold
-				&& abs(curr_point1[1] - curr_point2[1]) > threshold
-				&& abs(curr_point1[2] - curr_point2[2]) > threshold)
-			{
-				PUTPIXELMACRO( dest_img, col, row, b_g, width_step, pixel_step, dest_img->nChannels );
-			}
-			else if( curr_point2[0] == 0 && curr_point2[1] == 0 && curr_point2[2] == 255 )
-			{
-				PUTPIXELMACRO( dest_img, col, row, b_g, width_step, pixel_step, dest_img->nChannels );
-			}
-			else if( curr_point2[0] == 255 && curr_point2[1] == 255 && curr_point2[2] == 255 )
-			{
-				PUTPIXELMACRO( dest_img, col, row, b_g, width_step, pixel_step, dest_img->nChannels );
-			}
-		}
-	}
-}
-
-*/
 
 void draw_bounding_rectangle(IplImage * img, CvRect rect)
 {
@@ -223,7 +141,7 @@ void template_matching_handler(const IplImage *source,CvSeq * seq,const vector<I
 			double min_val, max_val;
 			cvMinMaxLoc(result, &min_val, &max_val);
 
-			cout << "Index: " << i << " " << max_val << endl;
+			// cout << "Index: " << i << " " << max_val << endl;
 
 			if(max_val < match_threshold)
 				continue;
@@ -238,16 +156,16 @@ void template_matching_handler(const IplImage *source,CvSeq * seq,const vector<I
 
 		if(match_threshold < maximum_val)
 		{
-			mark_image(target, templates[result_index], rects[i], 0.3);
-			mark_image(img, templates[result_index], rects[i], 0.3);
+			mark_image(target, templates[result_index], rects[i], 0.4);
+			// mark_image(img, templates[result_index], rects[i], 0.3);
 		}
 
-		cout << "Decision: " << result_index << " value: " << maximum_val  << endl << endl;
+		// cout << "Decision: " << result_index << " value: " << maximum_val  << endl << endl;
 
 	}
 
-	cvShowImage("Road signs recognition1", target);
-	cvShowImage("Road signs recognition2", img);
+	cvShowImage("Road signs recognition", target);
+	// cvShowImage("Road signs recognition2", img);
 }
 
 IplImage * template_matching(IplImage * source,const IplImage * templ, int method, const CvRect const rect)
