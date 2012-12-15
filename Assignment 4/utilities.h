@@ -33,3 +33,4 @@ void on_mouse_show_values( int event, int x, int y, int flags, void* );
 	for(row=0;row<img->height;++row)
 #define foreach_col(col, img) \
 	for(col=0;col<img->width;++col)
+

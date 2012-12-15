@@ -274,9 +274,9 @@ int main( int argc, char** argv )
 	// Load all the images.
 	for (int file_num=1; (file_num <= NUM_IMAGES); file_num++)
 	{
-		if( (images[1] = cvLoadImage("./RealRoadSigns.jpg",-1)) == 0 )
+		if( (images[0] = cvLoadImage("./RealRoadSigns.jpg",-1)) == 0 )
 			return 0;
-		if( (images[0] = cvLoadImage("./RealRoadSigns2.jpg",-1)) == 0 )
+		if( (images[1] = cvLoadImage("./RealRoadSigns2.jpg",-1)) == 0 )
 			return 0;
 		if( (images[2] = cvLoadImage("./ExampleRoadSigns.jpg",-1)) == 0 )
 			return 0;
