@@ -1,0 +1,26 @@
+Approach to solve assignment 1:
+find the red poit:
+	Because the picture is taken from the real world, the image noise is too much, so I can first use gaussian blur to smooth the image.
+	Since the lighting of each road sign in the original image is vary, we can convert the image from BGR to HSV color space.
+	By carefully selecting the threshold values, I can get very good result in finding red pixels on the road signs.
+	Finally, use mathematical morphology to clean the thresholding image.
+invert image:
+	just for each pixel, new_pixel_value = 255 - pixel_value
+determine_optimal_threshold:
+	According to lecture notes, I use "iterative threshold selection" to choose optimal threshold. It's essentially using binary search to look for balance foreground value and background value.
+apply_threshold_with_mask: 
+	for each white pixel in the mask image, if the pixel value in the result image of the same location is greater than the optimal threshold, set the pixel as white, otherwise, black.
+	
+Approach to solve assignment 4:
+load the templates and process them:
+	1. I find the red points using method describe above, and then find connected components of the template road sign, which will give me the contour of the road sign(circle or triangle).
+	2. Invert the image and find the contour of the background image.
+	3. conver the image to Red, White and Black using determine_optimal_sign_classification.
+	4. To reduce the size of the template, I find the bounding rectangle of the road sign contour, and cut the image base on the bouding rectangle.
+use template matching to solve the problem:
+	1. Convert the input image (real road sign) to Red, White and Black(RWB) form as assignment 1.
+	2. I get a list of bounding rectangles of each road sign in the RWB input image. Each bouding rectangle is the position and size of a real road sign that need to be classified
+	3. I cut each real road sign out and scale it to just a little bit bigger than template image, and do template matching. The algorithm I use for template matching is: normalized correlation coefficient
+	4. find the best match template for each real road sign. If the match result is greater than a threshold. I can consider it's a good match.
+	5. Another feature I evaluate is the number of red pixels. I count the number of red pixels in both real road sign image and template image, so if the two counts are different hugely, I will ignore this match.
+	6. Draw the classified result(scale it smaller so that we can also see the original real road sign) on the source image.
